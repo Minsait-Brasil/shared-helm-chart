@@ -1,0 +1,11 @@
+{{- if .Values.configMap }}
+{{- if (eq .Values.configMap.enable true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: "{{ .Values.appName }}-config"
+ namespace: {{ .Values.namespace }}
+data:
+{{ tpl (.Values.configMap.data | toYaml) $ | indent 2 }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      containers:
+      - name: {{ .Values.appName }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        #ENTRYPOINT
+        {{- if .Values.container }}
+        {{- if (eq .Values.container.enable true) }}
+        command: {{ .Values.container.command | toJson }}
+        args: {{ .Values.container.args | toJson }}
+        {{- end }}
+        {{- end }}
+
+        #SECRET/CONFIGMAP
+        {{- if or .Values.configMap .Values.secret }}
+        envFrom:
+        {{- if (eq .Values.secret.enable true) }}
+          - secretRef:
+              name: "{{ .Values.appName }}-secret"
+        {{- end }}
+
+        #CONFIGMAP
+        {{- if (eq .Values.configMap.enable true) }}
+          - configMapRef:
+              name: "{{ .Values.appName }}-config"
+        {{- end }}
+        {{- end }}
+
+        #LIMITS
+        {{- if .Values.resources }}
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }} 
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
+        {{- end }}
+
+        #PORTA
+        {{- if .Values.ingress.port }}
+        ports:
+        - containerPort: {{ .Values.ingress.port }}
+        {{- end }}
+
+        #PERSISTENCE
+        {{- if .Values.persistence }}
+        {{- if (eq .Values.persistence.enable true) }}
+        volumeMounts:
+        - name: {{ .Values.persistence.volumeName }}
+          mountPath: {{ .Values.persistence.mountPath }}
+        {{- end }}
+        {{- end }}
+
+      #PERSISTENCE
+      {{- if .Values.persistence }}
+      {{- if (eq .Values.persistence.enable true) }}
+      volumes:
+      - name: {{ .Values.persistence.volumeName }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.appName }}
+          readOnly: false
+      {{- end }}
+      {{- end }}

@@ -1,0 +1,3 @@
+include:
+  - project: gt/devops/ci-cd/shared-library
+    file: /templates/template-helm-harbor.yml

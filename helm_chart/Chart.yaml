@@ -1,0 +1,5 @@
+apiVersion: v2
+name: shared-helm-chart
+description: A Helm chart for Kubernetes
+version: 1.0.0
+#icon: "https://www.saashub.com/images/app/service_logos/157/gc1s8radswwz/large.png"

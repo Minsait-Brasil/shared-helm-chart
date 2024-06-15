@@ -1,0 +1,54 @@
+{{- if .Values.ingress }}
+{{- if (eq .Values.ingress.enable true) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+spec:
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.appName }}
+            port:
+              number: {{ .Values.ingress.port }}
+        path: {{ .Values.ingress.path }}
+        pathType: Prefix
+{{- end }}
+---
+{{- if (eq .Values.ingress.middleware_strip_prefix.enable true) }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: "{{ .Values.ingress.name }}-{{ .Values.appName }}-strip-prefix"
+  namespace: {{ .Values.namespace }}
+spec:
+  stripPrefix:
+    forceSlash: false
+    prefixes:
+      - {{ .Values.ingress.path }}
+{{- end }}
+---
+{{- if (eq .Values.ingress.middleware_validate_header.enable true) }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: "{{ .Values.ingress.name }}-{{ .Values.appName }}-validate-headers"
+  namespace: {{ .Values.namespace }}
+spec:
+  plugin:
+    traefik-plugin-validate-headers:
+      headers:
+        - header:
+          name: "Authorization"
+          matchtype: one
+          values:
+            - "^Bearer .*"
+          regex: true
+{{- end }}
+{{- end }}

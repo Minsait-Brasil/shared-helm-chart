@@ -1,0 +1,20 @@
+{{- if .Values.service }}
+{{- if (eq .Values.service.enable true) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+  - port: {{ .Values.service.port }}
+    {{- if .Values.service.protocol }}
+    protocol: {{ .Values.service.protocol }}
+    {{- end }}
+    targetPort: {{ .Values.service.port }}
+  selector:
+    app: {{ .Values.appName }}
+  sessionAffinity: None
+  type: {{ .Values.service.type }}
+{{- end }}
+{{- end }}
