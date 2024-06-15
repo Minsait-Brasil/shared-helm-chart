@@ -1,3 +1,3 @@
 include:
-  - project: gt/devops/ci-cd/shared-library
-    file: /templates/template-helm-harbor.yml
+  - project: devops/ci-cd/shared-library
+    file: template-helm-gitlab.yml
