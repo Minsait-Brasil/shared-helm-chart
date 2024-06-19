@@ -1,3 +1,36 @@
-include:
-  - project: devops/ci-cd/shared-library
-    file: template-helm-gitlab.yaml
+image: alpine/helm:3.10.2
+
+stages:
+  - test
+  - package
+  - harbor_push
+
+test_chart:
+  stage: test
+  only: 
+    - tags
+  tags:
+    - srvapp013
+  script:
+    - helm lint $CHART_PATH
+
+packaging:
+  stage: package
+  tags:
+    - srvapp013
+  only:
+    - tags
+  script:
+    - helm package $CHART_PATH
+
+harbor_pushing:
+  stage: harbor_push
+  only:
+    - tags
+  tags:
+    - srvapp013
+  script:
+    - yq -i '.version = "'${CI_COMMIT_TAG}'"' $CHART_PATH/Chart.yaml && cat $CHART_PATH/Chart.yaml
+#    - helm plugin install https://github.com/chartmuseum/helm-push
+    - helm repo add --insecure-skip-tls-verify --username "${HARBOR_USERNAME}" --password "${HARBOR_PASSWORD}" ${HARBOR_PROJECT} ${HARBOR}/${HARBOR_PROJECT}
+    - helm cm-push $CHART_PATH ${CI_PROJECT_NAME}
