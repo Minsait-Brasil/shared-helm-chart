@@ -1,9 +1,16 @@
+{{- if .Values.deployment }}
+{{- if (eq .Values.deployment.enable true) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.appName }}
   namespace: {{ .Values.namespace }}
 spec:
+  #DEPLOY STRATEGY
+  {{- if .Values.deployment.deployStrategy }}
+  strategy:
+    type: {{ .Values.deployment.deployStrategy }}
+  {{- end }}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -13,6 +20,18 @@ spec:
       labels:
         app: {{ .Values.appName }}
     spec:
+      #NODE NAME
+      {{- if .Values.nodeName }}
+      nodeName: {{ .Values.nodeName }}
+      {{- end }}
+
+      #SECURITY CONTEXT
+      {{- if .Values.securityContext }}
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- end }}
+
       containers:
       - name: {{ .Values.appName }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -76,3 +95,5 @@ spec:
           readOnly: false
       {{- end }}
       {{- end }}
+{{- end }}
+{{- end }}
