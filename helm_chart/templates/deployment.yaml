@@ -66,6 +66,16 @@ spec:
         {{- end }}
         {{- end }}
 
+      #ALIASES
+      {{- if .Values.hostAliases }}
+      {{- if (eq .Values.hostAliases.enable true) }}
+      hostAliases:
+        - hostnames:
+            - {{ .Values.hostAliases.hostnames }}
+          ip: {{ .Values.hostAliases.ip }}
+      {{- end }}
+      {{- end }}
+
       #PERSISTENCE
       {{- if .Values.persistence }}
       {{- if (eq .Values.persistence.enable true) }}
