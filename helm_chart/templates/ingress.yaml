@@ -9,6 +9,13 @@ metadata:
 {{ toYaml .Values.ingress.annotations | indent 4 }}
 spec:
   rules:
+  {{- if .Values.ingress.tls }}
+  {{- if (eq .Values.ingress.tls.enable true) }}
+  tls:
+    - hosts: {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+  {{- end }}
   - host: {{ .Values.ingress.host }}
     http:
       paths:
