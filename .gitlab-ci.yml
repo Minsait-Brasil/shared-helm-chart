@@ -26,7 +26,7 @@ harbor_pushing:
   before_script:
     - apk add yq
     - helm plugin install https://github.com/chartmuseum/helm-push
-    - echo '10.50.2.250 harbor-hml.vivo.com.br' >> /etc/hosts
+    # - echo '10.50.2.250 harbor-hml.vivo.com.br' >> /etc/hosts
   script:
     - yq -i '.version = "'${CI_COMMIT_TAG}'"' $CHART_PATH/Chart.yaml && cat $CHART_PATH/Chart.yaml
     - helm repo add --username "${HARBOR_USERNAME}" --password "${HARBOR_PASSWORD}" ${HARBOR_PROJECT} ${HARBOR_URL}/chartrepo/${HARBOR_PROJECT} --insecure-skip-tls-verify
