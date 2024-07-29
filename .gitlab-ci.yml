@@ -9,15 +9,11 @@ test_chart:
   stage: test
   only: 
     - tags
-  tags:
-    - srvapp013
   script:
     - helm lint $CHART_PATH
 
 packaging:
   stage: package
-  tags:
-    - srvapp013
   only:
     - tags
   script:
@@ -27,11 +23,15 @@ harbor_pushing:
   stage: harbor_push
   only:
     - tags
-  tags:
-    - srvapp013
+  before_script:
+    - apk add yq
+    - helm plugin install https://github.com/chartmuseum/helm-push
+    - echo '10.50.2.250 harbor-hml.vivo.com.br' >> /etc/hosts
   script:
     - yq -i '.version = "'${CI_COMMIT_TAG}'"' $CHART_PATH/Chart.yaml && cat $CHART_PATH/Chart.yaml
-#    - helm plugin install https://github.com/chartmuseum/helm-push
-    - helm repo remove ${CI_PROJECT_NAME}
-    - helm repo add --username ${REPO_TOKEN_NAME} --password ${REPO_ACCESS_TOKEN} ${CI_PROJECT_NAME} http://${GITLAB_HOST}:${GITLAB_PORT}/api/v4/projects/${CI_PROJECT_ID}/packages/helm/${CI_PROJECT_NAME}
-    - helm cm-push $CHART_PATH ${CI_PROJECT_NAME}
+    - helm repo add --username "${HARBOR_USERNAME}" --password "${HARBOR_PASSWORD}" ${HARBOR_PROJECT} ${HARBOR_URL}/chartrepo/${HARBOR_PROJECT} --insecure-skip-tls-verify
+    - helm cm-push $CHART_PATH ${HARBOR_PROJECT} --insecure
+
+    #GITLAB PUSH
+    # - helm repo add --username ${REPO_TOKEN_NAME} --password ${REPO_ACCESS_TOKEN} ${CI_PROJECT_NAME} http://${GITLAB_HOST}:${GITLAB_PORT}/api/v4/projects/${CI_PROJECT_ID}/packages/helm/${CI_PROJECT_NAME}
+    # - helm cm-push $CHART_PATH ${CI_PROJECT_NAME}
