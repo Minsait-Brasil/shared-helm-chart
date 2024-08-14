@@ -9,9 +9,9 @@ replicaCount:
 
 #HostAlias
 hostAliases:
-- ip: 
+- ip: 10.129.165.35
   hostnames:
-  - 
+  - autenticainthml.redecorp.br
 #ENTRYPOINT
 container:
   enable:
