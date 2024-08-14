@@ -8,10 +8,11 @@ image:
 replicaCount:
 
 #HostAlias
-hostAliases:
-- ip: 10.129.165.35
-  hostnames:
-  - autenticainthml.redecorp.br
+hostAliases: []
+# - ip: 10.20.30.40
+#   hostnames:
+#   - git.myhostname
+
 #ENTRYPOINT
 container:
   enable:
