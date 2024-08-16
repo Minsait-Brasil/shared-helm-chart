@@ -23,10 +23,10 @@ container:
 ingress:
   enable: false
   name:
-  paths:
-    path:
-    serviceName:
-    port:
+  paths: 
+    - path:
+      serviceName:
+      port:
   host:
   annotations:
     kubernetes.io/ingress.class:
