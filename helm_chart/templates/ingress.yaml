@@ -23,10 +23,10 @@ spec:
         {{- range .Values.ingress.paths }}
         - backend:
             service:
-              name: {{ .Values.ingress.paths.serviceName }}  # Nome do serviço variado para cada contexto
+              name: {{ .serviceName }} 
               port:
-                number: {{ .Values.ingress.paths.port }}
-          path: {{ .Values.ingress.paths.path }}  
+                number: {{ .port }} 
+          path: {{ .path }} 
           pathType: {{ .pathType | default "Prefix" }}
         {{- end }}
 {{- end }}
