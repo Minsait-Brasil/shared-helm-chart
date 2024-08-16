@@ -23,6 +23,10 @@ container:
 ingress:
   enable: false
   name:
+  paths:
+    - path: 
+      serviceName:
+      port:  
   host:
   port:
   path:
