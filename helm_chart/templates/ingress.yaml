@@ -26,7 +26,7 @@ spec:
               name: {{ .serviceName }}  # Nome do serviço variado para cada contexto
               port:
                 number: {{ .port }}
-          path: {{ .path }}
+          path: {{ .path | quote }}  
           pathType: {{ .pathType | default "Prefix" }}
         {{- end }}
 {{- end }}
