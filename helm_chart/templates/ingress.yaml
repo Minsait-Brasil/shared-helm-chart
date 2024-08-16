@@ -23,7 +23,7 @@ spec:
         {{- range .Values.ingress.paths }}
         - backend:
             service:
-              name: {{ .Values.appName }}
+              name: {{ .serviceName }}  # Nome do serviço variado para cada contexto
               port:
                 number: {{ .port }}
           path: {{ .path }}
