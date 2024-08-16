@@ -19,11 +19,16 @@ container:
   command:
   args:
 
+
 #INGRESS
 ingress:
   enable: false
   name:
   host:
+  paths:
+  - path:
+    serviceName:
+    port: 
   annotations:
     kubernetes.io/ingress.class:
     traefik.ingress.kubernetes.io/router.entrypoints:
