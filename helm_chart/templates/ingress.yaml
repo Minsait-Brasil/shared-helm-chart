@@ -20,13 +20,15 @@ spec:
   - host: {{ .Values.ingress.host }}
     http:
       paths:
-      - backend:
-          service:
-            name: {{ .Values.appName }}
-            port:
-              number: {{ .Values.ingress.port }}
-        path: {{ .Values.ingress.path }}
-        pathType: Prefix
+        {{- range .Values.ingress.paths }}
+        - backend:
+            service:
+              name: {{ .Values.appName }}
+              port:
+                number: {{ .port }}
+          path: {{ .path }}
+          pathType: {{ .pathType | default "Prefix" }}
+        {{- end }}
 {{- end }}
 ---
 {{- if (eq .Values.ingress.middleware_strip_prefix.enable true) }}
@@ -39,7 +41,9 @@ spec:
   stripPrefix:
     forceSlash: false
     prefixes:
-      - {{ .Values.ingress.path }}
+      {{- range .Values.ingress.paths }}
+      - {{ .path }}
+      {{- end }}
 {{- end }}
 ---
 {{- if (eq .Values.ingress.middleware_validate_header.enable true) }}
