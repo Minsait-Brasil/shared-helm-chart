@@ -28,8 +28,6 @@ ingress:
       serviceName:
       port:  
   host:
-  port:
-  path:
   annotations:
     kubernetes.io/ingress.class:
     traefik.ingress.kubernetes.io/router.entrypoints:
