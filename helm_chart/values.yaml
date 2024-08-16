@@ -25,9 +25,7 @@ ingress:
   enable: false
   name:
   host:
-  path:
-  serviceName:
-  port: 
+  paths:
   annotations:
     kubernetes.io/ingress.class:
     traefik.ingress.kubernetes.io/router.entrypoints:
