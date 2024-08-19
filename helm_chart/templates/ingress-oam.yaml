@@ -20,13 +20,20 @@ spec:
   - host: {{ .Values.ingressOAM.host }}
     http:
       paths:
-        - backend:
-            service:
-              name: {{ $serviceName }} 
-              port:
-                number: {{ $port }} 
-          path: {{ $path }} 
-          pathType: {{ .pathType | default "Prefix" }}
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-oam
+            port:
+              number: 80
+      - path: /vivogo
+        pathType: Prefix
+        backend:
+          service:
+            name: vivogo-om
+            port:
+              number: 8080
 {{- end }}
 ---
 {{- if (eq .Values.ingressOAM.middleware_strip_prefix.enable true) }}
