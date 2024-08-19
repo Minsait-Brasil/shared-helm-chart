@@ -25,7 +25,7 @@ ingress:
   enable: false
   name:
   host:
-  paths:
+  path:
   annotations:
     kubernetes.io/ingress.class:
     traefik.ingress.kubernetes.io/router.entrypoints:
@@ -36,6 +36,22 @@ ingress:
     enable: false
   middleware_validate_header:
     enable: false
+
+ingressOAM:
+  enable: false
+  name:
+  host:
+  annotations:
+    kubernetes.io/ingress.class:
+    traefik.ingress.kubernetes.io/router.entrypoints:
+    traefik.ingress.kubernetes.io/router.tls:
+    external-dns.alpha.kubernetes.io/hostname:
+    traefik.ingress.kubernetes.io/router.middlewares:
+  middleware_strip_prefix:
+    enable: false
+  middleware_validate_header:
+    enable: false
+
 
 #SERVICE
 service:
