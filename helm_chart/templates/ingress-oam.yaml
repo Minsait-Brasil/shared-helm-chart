@@ -1,0 +1,62 @@
+{{- if .Values.ingressOAM }}
+{{- if (eq .Values.ingressOAM.enable true) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+{{ toYaml .Values.ingressOAM.annotations | indent 4 }}
+spec:
+  {{- if .Values.ingressOAM.tls }}
+  {{- if (eq .Values.ingressOAM.tls.enable true) }}
+  tls:
+    - hosts: 
+        - {{ .Values.ingressOAM.host }}
+      secretName: {{ .Values.ingressOAM.tls.secretName }}
+  {{- end }}
+  {{- end }}
+  rules:
+  - host: {{ .Values.ingressOAM.host }}
+    http:
+      paths:
+        - backend:
+            service:
+              name: {{ $serviceName }} 
+              port:
+                number: {{ $port }} 
+          path: {{ $path }} 
+          pathType: {{ .pathType | default "Prefix" }}
+{{- end }}
+---
+{{- if (eq .Values.ingressOAM.middleware_strip_prefix.enable true) }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: "{{ .Values.ingressOAM.name }}-{{ .Values.appName }}-strip-prefix"
+  namespace: {{ .Values.namespace }}
+spec:
+  stripPrefix:
+    forceSlash: false
+    prefixes:
+      - {{ .path }}
+{{- end }}
+---
+{{- if (eq .Values.ingressOAM.middleware_validate_header.enable true) }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: "{{ .Values.ingressOAM.name }}-{{ .Values.appName }}-validate-headers"
+  namespace: {{ .Values.namespace }}
+spec:
+  plugin:
+    traefik-plugin-validate-headers:
+      headers:
+        - header:
+          name: "Authorization"
+          matchtype: one
+          values:
+            - "^Bearer .*"
+          regex: true
+{{- end }}
+{{- end }}
