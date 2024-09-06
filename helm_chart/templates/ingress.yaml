@@ -8,7 +8,6 @@ metadata:
   annotations:
 {{ toYaml .Values.ingress.annotations | indent 4 }}
 spec:
-  rules:
   {{- if .Values.ingress.tls }}
   {{- if (eq .Values.ingress.tls.enable true) }}
   tls:
