@@ -26,12 +26,7 @@ harbor_pushing:
   before_script:
     - apk add yq
     - helm plugin install https://github.com/chartmuseum/helm-push
-    - echo '10.50.2.250 harbor-hml.vivo.com.br' >> /etc/hosts
   script:
     - yq -i '.version = "'${CI_COMMIT_TAG}'"' $CHART_PATH/Chart.yaml && cat $CHART_PATH/Chart.yaml
-    - helm repo add --username "${HARBOR_USERNAME}" --password "${HARBOR_PASSWORD}" ${HARBOR_PROJECT} ${HARBOR_URL}/chartrepo/${HARBOR_PROJECT} --insecure-skip-tls-verify
-    - helm cm-push $CHART_PATH ${HARBOR_PROJECT} --insecure
-
-    #GITLAB PUSH
-    # - helm repo add --username ${REPO_TOKEN_NAME} --password ${REPO_ACCESS_TOKEN} ${CI_PROJECT_NAME} http://${GITLAB_HOST}:${GITLAB_PORT}/api/v4/projects/${CI_PROJECT_ID}/packages/helm/${CI_PROJECT_NAME}
-    # - helm cm-push $CHART_PATH ${CI_PROJECT_NAME}
+    - helm repo add --username "acrflydev01" --password "A1Z98rkHPpQDF+gvdd3b/CRxt9UCANlkfte0rBJPK1+ACRAg0Boe" gitlab acrflydev01.azurecr.io/chartrepo/gitlab
+    - helm cm-push $CHART_PATH gitlab
